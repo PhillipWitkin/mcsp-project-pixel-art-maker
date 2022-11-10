@@ -1,0 +1,33 @@
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  padding: 20px;
+  background: antiquewhite;
+  border-radius: 20px;
+}
+
+.canvas {
+  background: grey;
+  border-radius: 12px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pixel {
+  padding: 0;
+  border-radius: 0;
+  border: 1px solid grey;
+}
+
+.color-picker {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.swatch {
+  display: flex;
+}
