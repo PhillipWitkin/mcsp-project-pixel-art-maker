@@ -28,6 +28,7 @@ bluePicker.style.backgroundColor = 'blue';
 
 const swatch = document.querySelector('.swatch');
 
+// swatch.style.width = `${PIXEL_WIDTH * NUM_PIXELS}px`;
 swatch.append(redPicker)
 swatch.append(greenPicker)
 swatch.append(bluePicker)
