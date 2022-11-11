@@ -41,15 +41,19 @@ function colorPixelCallback(pixel, color){
   return function(event){
     console.log("Event: " + event.type, "on Grid Button: " + event.target.getAttribute("pixel-number"));
     const pixNum = pixel.getAttribute('pixel-number');
-    if (event.type == 'click'){
+    // check event type
+    if (event.type == 'click'){ 
+      // single pixel clicked
       console.log("Pixel: " + pixNum, " is being colored by click: " + color);
       pixel.style.backgroundColor = color;
-    } else if (event.type == 'mouseenter' && mouseState == 'down'){
+    } else if (event.type == 'mouseenter' && mouseButtonDown){ 
+      // mouse held down + moved over to next pixel
       console.log("Pixel: " + pixNum, " is being colored by drag: " + color);
       pixel.style.backgroundColor = color;
-    } else if (event.type == 'mousedown'){
-      console.log("Pixel: " + pixNum, " is being colored... " + color);
-      mouseState = 'down';
+    } else if (event.type == 'mousedown'){ 
+      // mouse hold starts coloring current pixel
+      console.log("Drag brush begin... Pixel: " + pixNum, " is being colored " + color);
+      mouseButtonDown = true;
       pixel.style.backgroundColor = color;
     }
 
@@ -60,19 +64,20 @@ function setupPixelListeners(color){
   pixels = document.querySelectorAll('.pixel');
   for (const pixel of pixels){    
     pixel.addEventListener('click', colorPixelCallback(pixel, color));
-    pixel.addEventListener('mouseenter', colorPixelCallback(pixel, color));
     // attach listeners for mouse up and down to color grid by dragging
+    pixel.addEventListener('mouseenter', colorPixelCallback(pixel, color));
     pixel.addEventListener('mousedown', colorPixelCallback(pixel, color));
-    pixel.addEventListener('mouseup', () => mouseState = 'up');
+    pixel.addEventListener('mouseup', () => mouseButtonDown = false);
   }
 }
 
-
-var mouseState = 'up';
+// The only globally scoped variable we will need to change at runtime
+var mouseButtonDown = false;
 
 createGrid()
 colorOptions = createPalette()
 for (const color of colorOptions) {
+  // add event listeners to select color from the palette
   color.addEventListener('click', () => {
     const colorString = color.style.backgroundColor;
     console.log("Selected color: " + colorString);
