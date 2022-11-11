@@ -6,13 +6,10 @@ canvas.style.width = `${PIXEL_WIDTH * NUM_PIXELS}px`;
 function createGrid(){
   for(let i = 1; i <= NUM_PIXELS ** 2; i++) {
     const pixel = document.createElement('button');
-    pixel.className = "pixel";
+    pixel.className = 'pixel';
     pixel.style.width = `${PIXEL_WIDTH}px`;
     pixel.style.height = `${PIXEL_WIDTH}px`;
-    pixel.setAttribute("pixel-number", i)
-    // pixel.addEventListener('click', () => {
-    //   pixel.style.background = 'red';
-    // });
+    pixel.setAttribute('pixel-number', i)
     canvas.append(pixel);
   }
 }
@@ -40,40 +37,25 @@ function createPalette(){
 }
 
 function colorPixelCallback(pixel, color){
-  return function(){
-    console.log("Pixel " + pixel.getAttribute("pixel-number") + " is being colored: " + color);
+  return function(event){
+    console.log("Event: " + event.type, "on Grid Button: " + event.target.getAttribute("pixel-number"));
+    console.log("Pixel " + pixel.getAttribute('pixel-number') + " is being colored: " + color);
     pixel.style.backgroundColor = color;
   }
 }
 
-// function colorPixel(pixel, color){
-//   console.log("Pixel " + pixel.getAttribute("pixel-number") + " is being colored: " + color);
-//   pixel.style.backgroundColor = color;
-// }
-
-// function setupPixelListeners(color){
-//   pixels = document.querySelectorAll("button");
-//   for (const pixel of pixels){
-//     // Add event listener as anonymous func 
-//     pixel.addEventListener("click",
-//     function(event){
-//       console.log("Pixel clicked..." + pixel.getAttribute("pixel-number"));
-//       colorPixel(event.target, color);
-//     });
-//   }
-// }
 
 function setupPixelListeners(color){
-  pixels = document.querySelectorAll("button");
+  pixels = document.querySelectorAll('.pixel');
   for (const pixel of pixels){    
-    pixel.addEventListener("click", colorPixelCallback(pixel, color));
+    pixel.addEventListener('click', colorPixelCallback(pixel, color));
   }
 }
 
 createGrid()
 colorOptions = createPalette()
 for (const color of colorOptions) {
-  color.addEventListener("click", () => {
+  color.addEventListener('click', () => {
     colorString = color.style.backgroundColor;
     console.log("Selected color: " + colorString);
     setupPixelListeners(colorString)
