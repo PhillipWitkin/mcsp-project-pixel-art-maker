@@ -3,32 +3,79 @@ const NUM_PIXELS = 20;
 const PIXEL_WIDTH = 20;
 canvas.style.width = `${PIXEL_WIDTH * NUM_PIXELS}px`;
 
-for(let i = 1; i <= NUM_PIXELS ** 2; i++) {
-  const pixel = document.createElement('button');
-  pixel.className = "pixel";
-  pixel.style.width = `${PIXEL_WIDTH}px`;
-  pixel.style.height = `${PIXEL_WIDTH}px`;
-  pixel.addEventListener('click', () => {
-    pixel.style.background = 'red';
-  });
-  canvas.append(pixel);
+function createGrid(){
+  for(let i = 1; i <= NUM_PIXELS ** 2; i++) {
+    const pixel = document.createElement('button');
+    pixel.className = "pixel";
+    pixel.style.width = `${PIXEL_WIDTH}px`;
+    pixel.style.height = `${PIXEL_WIDTH}px`;
+    pixel.setAttribute("pixel-number", i)
+    // pixel.addEventListener('click', () => {
+    //   pixel.style.background = 'red';
+    // });
+    canvas.append(pixel);
+  }
 }
 
-const redPicker = document.createElement('div');
-redPicker.className = 'color-picker';
-redPicker.style.backgroundColor = 'red';
+function createPalette(){
+  const redPicker = document.createElement('div');
+  redPicker.className = 'color-picker';
+  redPicker.style.backgroundColor = 'red';
+  
+  const greenPicker = document.createElement('div');
+  greenPicker.className = 'color-picker';
+  greenPicker.style.backgroundColor = 'green';
+  
+  const bluePicker = document.createElement('div');
+  bluePicker.className = 'color-picker';
+  bluePicker.style.backgroundColor = 'blue';
+  
+  const swatch = document.querySelector('.swatch');
+  
+  swatch.append(redPicker)
+  swatch.append(greenPicker)
+  swatch.append(bluePicker)
+  // return an array of dom elements for our color selectors
+  return [redPicker, greenPicker, bluePicker]
+}
 
-const greenPicker = document.createElement('div');
-greenPicker.className = 'color-picker';
-greenPicker.style.backgroundColor = 'green';
+function colorPixelCallback(pixel, color){
+  return function(){
+    console.log("Pixel " + pixel.getAttribute("pixel-number") + " is being colored: " + color);
+    pixel.style.backgroundColor = color;
+  }
+}
 
-const bluePicker = document.createElement('div');
-bluePicker.className = 'color-picker';
-bluePicker.style.backgroundColor = 'blue';
+// function colorPixel(pixel, color){
+//   console.log("Pixel " + pixel.getAttribute("pixel-number") + " is being colored: " + color);
+//   pixel.style.backgroundColor = color;
+// }
 
-const swatch = document.querySelector('.swatch');
+// function setupPixelListeners(color){
+//   pixels = document.querySelectorAll("button");
+//   for (const pixel of pixels){
+//     // Add event listener as anonymous func 
+//     pixel.addEventListener("click",
+//     function(event){
+//       console.log("Pixel clicked..." + pixel.getAttribute("pixel-number"));
+//       colorPixel(event.target, color);
+//     });
+//   }
+// }
 
-// swatch.style.width = `${PIXEL_WIDTH * NUM_PIXELS}px`;
-swatch.append(redPicker)
-swatch.append(greenPicker)
-swatch.append(bluePicker)
+function setupPixelListeners(color){
+  pixels = document.querySelectorAll("button");
+  for (const pixel of pixels){    
+    pixel.addEventListener("click", colorPixelCallback(pixel, color));
+  }
+}
+
+createGrid()
+colorOptions = createPalette()
+for (const color of colorOptions) {
+  color.addEventListener("click", () => {
+    colorString = color.style.backgroundColor;
+    console.log("Selected color: " + colorString);
+    setupPixelListeners(colorString)
+  });
+};
