@@ -3,14 +3,15 @@ class Board {
   static PIXEL_WIDTH = 20;
   static mouseButtonDown = false;
   static canvas = document.querySelector('.canvas');
+  colorPalette = [];
 
-  constructor(numPixels, pixelWidth){
+  constructor(numPixels, pixelWidth, ...colors){
     this.numPixels = numPixels ?? Board.NUM_PIXELS; // arguments.length == 0 ? NUM_PIXELS : numPixels;
     this.pixelWidth = pixelWidth ?? Board.PIXEL_WIDTH; // arguments.length == 0 ? PIXEL_WIDTH : pixelWidth;
     Board.canvas.style.width = `${this.pixelWidth * this.numPixels}px`;
     this.createGrid()
-    const colorOptions = this.createPalette()
-    for (const color of colorOptions) {
+    this.createPalette(colors)
+    for (const color of this.colorPalette) {
       // add event listeners to select color from the palette
       color.addEventListener('click', () => {
         const colorString = color.style.backgroundColor;
@@ -31,26 +32,19 @@ class Board {
     }
   }
 
-  createPalette(){
-    const redPicker = document.createElement('div');
-    redPicker.className = 'color-picker';
-    redPicker.style.backgroundColor = 'red';
-    
-    const greenPicker = document.createElement('div');
-    greenPicker.className = 'color-picker';
-    greenPicker.style.backgroundColor = 'green';
-    
-    const bluePicker = document.createElement('div');
-    bluePicker.className = 'color-picker';
-    bluePicker.style.backgroundColor = 'blue';
-    
+  createPalette(palette){
     const swatch = document.querySelector('.swatch');
-    
-    swatch.append(redPicker);
-    swatch.append(greenPicker);
-    swatch.append(bluePicker);
-    // return an array of dom elements for our color selectors
-    return [redPicker, greenPicker, bluePicker];
+    if (palette.length == 0){
+      palette = ["red", "green", "blue"];
+    }
+    console.log("Colors for Palette: " + palette.toString()) 
+    for (const color of palette){
+      const colorChoice = document.createElement('div');
+      colorChoice.className = 'color-picker';
+      colorChoice.style.backgroundColor = color;
+      this.colorPalette.push(colorChoice);
+      swatch.append(colorChoice)
+    }
   }
 
   setupPixelListeners(color){
