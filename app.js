@@ -37,8 +37,9 @@ function createPalette(){
 }
 
 // This will be called by the event listener, automatically has access to triggering 'event'
-function colorPixelCallback(pixel, color){
+function colorPixelCallback(color){
   return function(event){
+    const pixel = event.target;
     console.log("Event: " + event.type, "on Grid Button: " + event.target.getAttribute("pixel-number"));
     const pixNum = pixel.getAttribute('pixel-number');
     // check event type
@@ -62,25 +63,39 @@ function colorPixelCallback(pixel, color){
 
 function setupPixelListeners(color){
   pixels = document.querySelectorAll('.pixel');
+  const handler = colorPixelCallback(color);
+  canvas.addEventListener('click', handler);
+  canvas.addEventListener('mouseup', () => mouseButtonDown = false);
   for (const pixel of pixels){    
-    pixel.addEventListener('click', colorPixelCallback(pixel, color));
-    // attach listeners for mouse up and down to color grid by dragging
-    pixel.addEventListener('mouseenter', colorPixelCallback(pixel, color));
-    pixel.addEventListener('mousedown', colorPixelCallback(pixel, color));
-    pixel.addEventListener('mouseup', () => mouseButtonDown = false);
+    // attach listeners for mouse enter and down to color grid by dragging
+    pixel.addEventListener('mouseenter', handler);
+    pixel.addEventListener('mousedown', handler);
+  }
+  return handler;
+}
+
+
+function removePixelListeners(handler){
+  console.log("Removing listeners");
+  canvas.removeEventListener('click', handler);
+  pixels = document.querySelectorAll('.pixel');
+  for (const pixel of pixels){    
+    pixel.removeEventListener('mouseenter', handler);
+    pixel.removeEventListener('mousedown', handler);
   }
 }
 
-// The only globally scoped variable we will need to change at runtime
+// The only globally scoped variables we will need to change at runtime
 var mouseButtonDown = false;
+var handler;
 
 createGrid()
-colorOptions = createPalette()
+const colorOptions = createPalette();
 for (const color of colorOptions) {
-  // add event listeners to select color from the palette
   color.addEventListener('click', () => {
-    const colorString = color.style.backgroundColor;
+    handler && removePixelListeners(handler);
+    colorString = color.style.backgroundColor;
     console.log("Selected color: " + colorString);
-    setupPixelListeners(colorString)
+    handler = setupPixelListeners(colorString)
   });
 };
