@@ -36,8 +36,9 @@ function createPalette(){
   return [redPicker, greenPicker, bluePicker]
 }
 
-function colorPixelCallback(pixel, color){
+function colorPixelCallback(color){
   return function(event){
+    const pixel = event.target;
     console.log("Event: " + event.type, "on Grid Button: " + event.target.getAttribute("pixel-number"));
     console.log("Pixel " + pixel.getAttribute('pixel-number') + " is being colored: " + color);
     pixel.style.backgroundColor = color;
@@ -47,17 +48,31 @@ function colorPixelCallback(pixel, color){
 
 function setupPixelListeners(color){
   pixels = document.querySelectorAll('.pixel');
+  const handler = colorPixelCallback(color);
   for (const pixel of pixels){    
-    pixel.addEventListener('click', colorPixelCallback(pixel, color));
+    pixel.addEventListener('click', handler);
+  }
+  return handler;
+}
+
+function removePixelListeners(handler){
+  console.log("Removing listeners");
+  pixels = document.querySelectorAll('.pixel');
+  for (const pixel of pixels){    
+    pixel.removeEventListener('click', handler);
   }
 }
 
 createGrid()
-colorOptions = createPalette()
+colorOptions = createPalette();
+var brushColor;
+var handler;
 for (const color of colorOptions) {
   color.addEventListener('click', () => {
+    handler && removePixelListeners(handler);
     colorString = color.style.backgroundColor;
     console.log("Selected color: " + colorString);
-    setupPixelListeners(colorString)
+    brushColor = colorString;
+    handler = setupPixelListeners(colorString)
   });
 };
