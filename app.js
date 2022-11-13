@@ -1,39 +1,38 @@
 const canvas = document.querySelector('.canvas');
 const NUM_PIXELS = 20;
 const PIXEL_WIDTH = 20;
-canvas.style.width = `${PIXEL_WIDTH * NUM_PIXELS}px`;
+// canvas.style.width = `${PIXEL_WIDTH * NUM_PIXELS}px`;
 
-function createGrid(){
-  for(let i = 1; i <= NUM_PIXELS ** 2; i++) {
+function createGrid(numPixels, pixelWidth){
+  this.numPixels = numPixels ?? NUM_PIXELS; 
+  this.pixelWidth = pixelWidth ?? PIXEL_WIDTH;
+  for(let i = 1; i <= this.numPixels ** 2; i++) {
     const pixel = document.createElement('button');
     pixel.className = 'pixel';
-    pixel.style.width = `${PIXEL_WIDTH}px`;
-    pixel.style.height = `${PIXEL_WIDTH}px`;
-    pixel.setAttribute('pixel-number', i)
+    pixel.style.width = `${this.pixelWidth}px`;
+    pixel.style.height = `${this.pixelWidth}px`;
+    canvas.style.width = `${this.pixelWidth * this.numPixels}px`;
+    pixel.setAttribute('pixel-number', i);
     canvas.append(pixel);
   }
 }
 
-function createPalette(){
-  const redPicker = document.createElement('div');
-  redPicker.className = 'color-picker';
-  redPicker.style.backgroundColor = 'red';
-  
-  const greenPicker = document.createElement('div');
-  greenPicker.className = 'color-picker';
-  greenPicker.style.backgroundColor = 'green';
-  
-  const bluePicker = document.createElement('div');
-  bluePicker.className = 'color-picker';
-  bluePicker.style.backgroundColor = 'blue';
-  
+function createPalette(...colors){
+  if (colors.length == 0){ // set a default color palette if none are passed in
+    colors = ["red", "green", "blue"];
+  }
+  console.log("Colors for Palette: " + colors.toString());
   const swatch = document.querySelector('.swatch');
-  
-  swatch.append(redPicker)
-  swatch.append(greenPicker)
-  swatch.append(bluePicker)
+  let palette = []; 
+  for (const color of colors){
+    const colorChoice = document.createElement('div');
+    colorChoice.className = 'color-picker';
+    colorChoice.style.backgroundColor = color;
+    palette.push(colorChoice);
+    swatch.append(colorChoice);
+  }
   // return an array of dom elements for our color selectors
-  return [redPicker, greenPicker, bluePicker]
+  return palette;
 }
 
 function colorPixelCallback(color){
@@ -63,16 +62,14 @@ function removePixelListeners(handler){
   }
 }
 
-createGrid()
-colorOptions = createPalette();
-var brushColor;
+createGrid(25, 25);
+const colorOptions = createPalette("red", "blue", "purple");
 var handler;
 for (const color of colorOptions) {
   color.addEventListener('click', () => {
     handler && removePixelListeners(handler);
     colorString = color.style.backgroundColor;
     console.log("Selected color: " + colorString);
-    brushColor = colorString;
     handler = setupPixelListeners(colorString)
   });
 };
